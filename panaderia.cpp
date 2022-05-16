@@ -29,7 +29,7 @@ void hiloCliente(int pid) {
 			sem_wait(&sem);
 			turno.lock();
 		}
-		printf("Cliente %s con tiquet %d recibiendo atencion", pid, tiquete);
+		printf("Cliente %d con tiquet %d recibiendo atencion", pid, tiquete);
 		this_thread::sleep_for(seconds(rand() % 5 + 1));
 		turnoActual++;
 		sem_post(&sem);
@@ -47,7 +47,7 @@ int main() {
 		clientes[i].join();
 	}
 	sem_destroy(&sem);
-	delete[] threads;
+	delete[] clientes;
 	EXIT_SUCCESS;
 }
 
