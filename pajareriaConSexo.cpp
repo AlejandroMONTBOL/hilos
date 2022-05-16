@@ -43,7 +43,7 @@ public:
 	}
 
 };
-Columpio columpio;//columpio es variable global
+Columpio columpio(NULL, NULL);//columpio es variable global
 void comer(Canario& canario) {
 	mtx.lock();
 	while (comiendo == MAX_COMIENDO) {
