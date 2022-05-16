@@ -5,6 +5,7 @@
 #include <chrono>
 #include <semaphore.h>
 #define CAPACIDAD_CAJA 10
+#define NUM_EMBOTELLADORES 5
 using namespace std;
 using namespace chrono;
 
@@ -87,13 +88,16 @@ int main() {
     sem_init(&semEmpaquetador, 0, 0);
     static int i = 0;
     thread empaquetador(hiloEmpaquetador, i++);
-    thread embotellador(hiloEmbotellador, i++);
-    embotellador.join();
-    empaquetador.join();
-    /*for (int i = 0; i < NUM_CANARIOS; i++)
+    thread* emobotelladores = new thread[NUM_EMBOTELLADORES];
+    for (int i = 0; i < NUM_EMBOTELLADORES; i++)
     {
-        threads[i].join();
-    }*/
+        emobotelladores[i] = thread(hiloEmbotellador, i + 1);
+    }
+    for (int i = 0; i < NUM_EMBOTELLADORES; i++)
+    {
+        emobotelladores[i].join();
+    }
+    empaquetador.join();
     //liberamos recursos
     sem_destroy(&semEmpaquetador);
     sem_destroy(&semEmbotellador);
