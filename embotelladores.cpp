@@ -32,6 +32,7 @@ void hiloEmbotellador(int pid) {
         }
         colocarBotellasEnCaja(pid);
         botellasEnCaja++;
+        printf("Botellas en caja: %d. \n", botellasEnCaja);
         if (botellasEnCaja == CAPACIDAD_CAJA)
         {
             sem_post(&sem);
@@ -66,7 +67,7 @@ void hiloEmpaquetador(int pid)
         while (botellasEnCaja < CAPACIDAD_CAJA)
         {
             mtx.unlock();
-            set_wait(&sem);
+            sem_wait(&sem);
             mtx.lock();
         }
         tomarCaja(pid);
@@ -74,6 +75,7 @@ void hiloEmpaquetador(int pid)
         guardarCajaEnAlmacen(pid);
         ponerCajaVacia(pid);
         botellasEnCaja = 0;
+        printf("Botellas en caja: %d. \n", botellasEnCaja);
         sem_post(&sem);
         mtx.unlock();
     }
@@ -81,8 +83,9 @@ void hiloEmpaquetador(int pid)
 
 int main() {
     sem_init(&sem, 0, 0);
-    thread empaquetador(hiloEmpaquetador);
-    thread embotellador(hiloEmbotellador);
+    static int i = 0;
+    thread empaquetador(hiloEmpaquetador, i++);
+    thread embotellador(hiloEmbotellador, i++);
     embotellador.join();
     empaquetador.join();
     /*for (int i = 0; i < NUM_CANARIOS; i++)
